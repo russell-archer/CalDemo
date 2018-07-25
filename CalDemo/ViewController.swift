@@ -9,12 +9,41 @@
 import UIKit
 
 class ViewController: UIViewController {
-
+    fileprivate var calHelper = CalHelper()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        calHelper.delegate = self
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        calHelper.checkEventStoreAccess()
+    }
+}
 
+extension ViewController: CalHelperDelegate {
+    func storeAccessHasChanged(accessGranted: Bool) {
+        guard accessGranted else {
+            print("You have not granted access to calendars")
+            return
+        }
+        
+        guard calHelper.loadCalendars() else {
+            print("No calendars found")
+            return
+        }
+
+        let events = calHelper.loadEvents()
+        guard events != nil else {
+            print("No events found")
+            return
+        }
+        
+        print("Found the following events in all calendars...")
+        for event in events! {
+            print("\(event.startDate!) \(event.title!)")
+        }
+    }
 }
 
