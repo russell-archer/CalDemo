@@ -34,14 +34,13 @@ extension ViewController: CalHelperDelegate {
             return
         }
 
-        let events = calHelper.loadEvents()
-        guard events != nil else {
+        guard calHelper.loadEvents() else {
             print("No events found")
             return
         }
         
         print("Found the following events in all calendars...")
-        for event in events! {
+        for event in calHelper.events! {
             print("\(event.startDate!) \(event.title!)")
         }
     }

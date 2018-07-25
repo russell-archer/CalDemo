@@ -23,21 +23,16 @@ protocol CalHelperDelegate {
 }
 
 class CalHelper {
-    fileprivate var store: EKEventStore!
+    fileprivate var store = EKEventStore()
     fileprivate var cals: [EKCalendar]?
-    fileprivate var events: [EKEvent]?
     
+    public var events: [EKEvent]?
     public var delegate: CalHelperDelegate?
-    
     public var hasEventStoreAccess = false {
         didSet {
             print("Event store access has changed from \(oldValue) to \(hasEventStoreAccess)")
             delegate?.storeAccessHasChanged(accessGranted: hasEventStoreAccess)
         }
-    }
-    
-    init() {
-        store = EKEventStore()
     }
     
     // Call from your view controller's viewWillAppear() method
@@ -62,9 +57,9 @@ class CalHelper {
         return true
     }
     
-    public func loadEvents() -> [EKEvent]? {
-        guard hasEventStoreAccess else { return nil }
-        guard cals != nil else { return nil }
+    public func loadEvents() -> Bool {
+        guard hasEventStoreAccess else { return false }
+        guard cals != nil else { return false }
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd-MM-yyyy"
@@ -72,14 +67,13 @@ class CalHelper {
         // Create start and end date NSDate instances to build a predicate for which events to select
         let startDate = Date()
         let endDate = dateFormatter.date(from: "31-12-2018")
-        guard endDate != nil else { return nil }
+        guard endDate != nil else { return false }
         
         let eventsPredicate = store.predicateForEvents(withStart: startDate, end: endDate!, calendars: cals)
 
         events = store.events(matching: eventsPredicate)
-        guard events != nil else { return nil }
-
-        return events
+        guard events != nil else { return false }
+        return true
     }
     
     fileprivate func askPermission() {
