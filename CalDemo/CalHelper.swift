@@ -20,6 +20,7 @@ import EventKitUI
 
 protocol CalHelperDelegate {
     func storeAccessHasChanged(accessGranted: Bool)
+    func storeEventsAvailable(count: Int)
 }
 
 class CalHelper {
@@ -47,33 +48,30 @@ class CalHelper {
         }
     }
     
-    // Return the titles of the available calendars
-    public func loadCalendars() -> Bool {
-        guard hasEventStoreAccess else { return false }
+    public func loadEvents() {
+        guard hasEventStoreAccess else { return }
         
-        cals = store.calendars(for: EKEntityType.event)
-        
-        guard cals != nil else { return false }
-        return true
-    }
-    
-    public func loadEvents() -> Bool {
-        guard hasEventStoreAccess else { return false }
-        guard cals != nil else { return false }
+        loadCalendars()
+        guard cals != nil else { return }
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd-MM-yyyy"
         
-        // Create start and end date NSDate instances to build a predicate for which events to select
         let startDate = Date()
         let endDate = dateFormatter.date(from: "31-12-2018")
-        guard endDate != nil else { return false }
+        guard endDate != nil else { return }
         
+        // A predicate (NSPredicate) is a filter: here we specify the criteria we want to match
         let eventsPredicate = store.predicateForEvents(withStart: startDate, end: endDate!, calendars: cals)
 
         events = store.events(matching: eventsPredicate)
-        guard events != nil else { return false }
-        return true
+        guard events != nil else { return }
+        
+        events!.sort(by: { (e1: EKEvent, e2: EKEvent) -> Bool in
+            return e1.startDate.compare(e2.startDate) == ComparisonResult.orderedAscending
+        })
+        
+        delegate?.storeEventsAvailable(count: events!.count)
     }
     
     fileprivate func askPermission() {
@@ -82,5 +80,11 @@ class CalHelper {
                 self.hasEventStoreAccess = accessGranted
             })
         })
+    }
+    
+    fileprivate func loadCalendars() {
+        guard hasEventStoreAccess else { return }
+        
+        cals = store.calendars(for: EKEntityType.event)
     }
 }

@@ -28,20 +28,18 @@ extension ViewController: CalHelperDelegate {
             print("You have not granted access to calendars")
             return
         }
-        
-        guard calHelper.loadCalendars() else {
-            print("No calendars found")
-            return
-        }
 
-        guard calHelper.loadEvents() else {
-            print("No events found")
-            return
-        }
+        calHelper.loadEvents()
+    }
+    
+    func storeEventsAvailable(count: Int) {
+        print("Found the following \(count) events in all calendars...")
         
-        print("Found the following events in all calendars...")
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd-MM-yyyy, HH:mm"
+        
         for event in calHelper.events! {
-            print("\(event.startDate!) \(event.title!)")
+            print("\(event.calendar.title) \(dateFormatter.string(from: event.startDate!)) \(event.title!)")
         }
     }
 }
