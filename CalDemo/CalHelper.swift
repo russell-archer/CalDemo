@@ -31,7 +31,6 @@ class CalHelper {
     public var delegate: CalHelperDelegate?
     public var hasEventStoreAccess = false {
         didSet {
-            print("Event store access has changed from \(oldValue) to \(hasEventStoreAccess)")
             delegate?.storeAccessHasChanged(accessGranted: hasEventStoreAccess)
         }
     }
@@ -74,6 +73,28 @@ class CalHelper {
         delegate?.storeEventsAvailable(count: events!.count)
     }
     
+    public func addEvent() -> Bool {
+        guard hasEventStoreAccess else { return false }
+        guard cals != nil else { return false }
+        
+        let newEvent = EKEvent(eventStore: store)
+        let cal = getDefaultCalendar()
+        
+        newEvent.title = "Auto-Event-Test3"
+        newEvent.startDate = Date()
+        newEvent.endDate = newEvent.startDate.addingTimeInterval(300)
+        newEvent.calendar = cal
+        
+        do {
+            try store.save(newEvent, span: .thisEvent)
+        } catch {
+            print("Error adding event")
+            return false
+        }
+        
+        return true
+    }
+    
     fileprivate func askPermission() {
         store.requestAccess(to: EKEntityType.event, completion: { (accessGranted: Bool, error: Error?) in
             DispatchQueue.main.async(execute: {
@@ -86,5 +107,16 @@ class CalHelper {
         guard hasEventStoreAccess else { return }
         
         cals = store.calendars(for: EKEntityType.event)
+    }
+    
+    fileprivate func getDefaultCalendar() -> EKCalendar? {
+        guard hasEventStoreAccess else { return nil }
+        guard cals != nil else { return nil }
+        
+        for cal in cals! {
+            if cal.title == "Calendar" { return cal }
+        }
+        
+        return nil
     }
 }

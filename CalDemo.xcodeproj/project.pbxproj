@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		68201FF0210E75AB00CF0057 /* AddEventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68201FEF210E75AB00CF0057 /* AddEventViewController.swift */; };
 		68EC71162108D881002B0091 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68EC71152108D881002B0091 /* AppDelegate.swift */; };
 		68EC71182108D881002B0091 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68EC71172108D881002B0091 /* ViewController.swift */; };
 		68EC711B2108D881002B0091 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 68EC71192108D881002B0091 /* Main.storyboard */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		68201FEF210E75AB00CF0057 /* AddEventViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddEventViewController.swift; sourceTree = "<group>"; };
 		68EC71122108D881002B0091 /* CalDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CalDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		68EC71152108D881002B0091 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		68EC71172108D881002B0091 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -56,13 +58,14 @@
 		68EC71142108D881002B0091 /* CalDemo */ = {
 			isa = PBXGroup;
 			children = (
+				68EC71212108D883002B0091 /* Info.plist */,
+				68201FEF210E75AB00CF0057 /* AddEventViewController.swift */,
 				68EC71152108D881002B0091 /* AppDelegate.swift */,
-				68EC71172108D881002B0091 /* ViewController.swift */,
 				68EC71272108D96F002B0091 /* CalHelper.swift */,
-				68EC71192108D881002B0091 /* Main.storyboard */,
+				68EC71172108D881002B0091 /* ViewController.swift */,
 				68EC711C2108D883002B0091 /* Assets.xcassets */,
 				68EC711E2108D883002B0091 /* LaunchScreen.storyboard */,
-				68EC71212108D883002B0091 /* Info.plist */,
+				68EC71192108D881002B0091 /* Main.storyboard */,
 			);
 			path = CalDemo;
 			sourceTree = "<group>";
@@ -139,6 +142,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				68EC71182108D881002B0091 /* ViewController.swift in Sources */,
+				68201FF0210E75AB00CF0057 /* AddEventViewController.swift in Sources */,
 				68EC71162108D881002B0091 /* AppDelegate.swift in Sources */,
 				68EC71282108D96F002B0091 /* CalHelper.swift in Sources */,
 			);

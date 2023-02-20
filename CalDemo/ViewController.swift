@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UITableViewController {
     fileprivate var calHelper = CalHelper()
     
     override func viewDidLoad() {
@@ -20,27 +20,55 @@ class ViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         calHelper.checkEventStoreAccess()
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let segueId = segue.identifier, segueId == "Events2AddEvent" {
+            if let destVc = segue.destination as? AddEventViewController {
+                destVc.calHelper = calHelper
+            }
+        }
+    }
 }
 
 extension ViewController: CalHelperDelegate {
     func storeAccessHasChanged(accessGranted: Bool) {
-        guard accessGranted else {
-            print("You have not granted access to calendars")
-            return
-        }
+        guard accessGranted else { return }
 
         calHelper.loadEvents()
     }
     
     func storeEventsAvailable(count: Int) {
-        print("Found the following \(count) events in all calendars...")
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd-MM-yyyy, HH:mm"
-        
-        for event in calHelper.events! {
-            print("\(event.calendar.title) \(dateFormatter.string(from: event.startDate!)) \(event.title!)")
-        }
+        tableView.reloadData()
     }
 }
 
+extension ViewController: AddEventDelegate {
+    func eventAdded() {
+        calHelper.loadEvents()  // Causes events and the tableview to be reloaded
+    }
+}
+
+extension ViewController {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd-MM"
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: "EventCell", for: indexPath)
+        
+        if calHelper.hasEventStoreAccess && calHelper.events != nil {
+            cell.textLabel?.text = calHelper.events?[indexPath.row].title
+            
+            let calTitle = calHelper.events?[indexPath.row].calendar.title
+            let startDate = dateFormatter.string(from: (calHelper.events?[indexPath.row].startDate!)!)
+            
+            cell.detailTextLabel?.text = calTitle! + ", " + startDate
+        }
+        
+        return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        guard calHelper.hasEventStoreAccess && calHelper.events != nil else { return 0 }
+        return calHelper.events!.count
+    }
+}
